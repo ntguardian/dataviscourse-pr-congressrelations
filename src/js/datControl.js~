@@ -62,8 +62,6 @@ selection) while ensuring that they are removed
 from nonselectedMembers.
  */
 congress.addMember = function(members) {
-    var self = this;
-    
     if (typeof members === "string") {
         members = [members];
     } else if (members != "object") {
@@ -71,9 +69,9 @@ congress.addMember = function(members) {
     }
 
     members.forEach(function(element, i, arr) {
-        if (self.metaData.members.has(element)) {
-            self.selectedMembers.add(element);
-            self.nonselectedMembers.delete(element);
+        if (congress.metaData.members.has(element)) {
+            congress.selectedMembers.add(element);
+            congress.nonselectedMembers.delete(element);
         } else {
             throw new RangeError;
         }
@@ -86,10 +84,8 @@ of all entries, and adds all members to
 congress.nonselectedMembers.
  */
 congress.clearMembers = function() {
-    var self = this;
-
-    self.selectedMembers.forEach(congress.selectedMembers.delete);
-    self.metaData.members.forEach(congress.nonselectedMembers.add);
+    congress.selectedMembers.forEach(congress.selectedMembers.delete);
+    congress.metaData.members.forEach(congress.nonselectedMembers.add);
 };
 
 /* congress.memberAgreementPercent:
@@ -109,50 +105,10 @@ memberAgreementPercent object, where these values
 are stored.
  */
 congress.getAgreementPercent = function() {
-    var self = this;
 
-    if (self.selectedMembers.size == 0) {
+    if (congress.selectedMembers.size == 0) {
         // No members have been selected; now, we interpret memberAgreementPercent as the percentage of times a member voted with the winning side.
     } else {
-        // First, get the indices of times everyone in the selection voted in agreement
-        var commonVotes = [];
-        
-        for (i = 0; i < self.metaData.votes.size; i++) {
-	    var agreement = true;
-	    var selectIter = self.selectedMembers.values();
-	    var mem1 = selectIter.next().value;
-	    
-	    var sn = selectedIter.next();
-	    // Check for agreement
-	    while (!(sn.done)) {
-		// Notice that when a member doesn't vote, that vote is not included
-		agreement = agreement & (self.data[mem1].votes[i] == self.data[sn.value].votes[i]) & (self.data[sn.value].votes[i] != "Not Voting");
-		sn = selectedIter.next();
-	    }
-	    
-	    if (agreement) {
-		commonVotes.add(i);
-	    }
-        }
-	
-	// Next, for each member, get the proportion of times they voted the same as members in the selection
-	self.metaData["members"].forEach(function(val) {
-	    // Get the number of times the member voted in agreement with a member in the selection
-	    var count = 0;
-	    var mem1 = self.selectedMembers.value().next().value;
-	    
-	    commonVotes.forEach(function(val2) {
-		if (self.data[val].votes[val2] == self.data[mem1].votes[val2]) {
-		    count++;
-		}
-	    });
-	    
-	    // Assign to memberAgreementPercent
-	    if (commonVotes.size > 0) {
-		self.memberAgreementPercent[val] = count / commonVotes.size;
-	    } else {	// A "default" value
-		self.memberAgreementPercent[val] = 0;
-	    }
-	});
+        // First, sum the number of times everyone in the selection voted in agreement
     }
 };
