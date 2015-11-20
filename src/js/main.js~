@@ -12,19 +12,22 @@
  *      * Loads the data in the json files
  *	* Runs the visualizations once the data
  *	  is loaded
- *	* Creates a dispatcher for event handling
   */
 
-// dispatch creation
-/* 
-selectionChanged:
-Reloads all views when the member selection has
-changed.
-*/
-dispatch = d3.dispatch("selectionChanged");
-
 // Data loading
+// The following function is used for loading json data
 // Code inspired by: https://groups.google.com/forum/#!msg/d3-js/3Y9VHkOOdCM/YnmOPopWUxQJ
+/*function json(path, callback) {
+    d3.json(path, function(json) {
+	json ? callback(null,json):callback("error",null);
+    });
+}*/
+
+// Load the data
+/*queue()
+    .defer(json, "data/Senate114Metadata.json")
+    .defer(json, "data/SenateRecord114.json")
+    .awaitAll(function(error));*/
 
 // First load and assign metadata
 d3.json("data/Senate114Metadata.json", function(md) {
