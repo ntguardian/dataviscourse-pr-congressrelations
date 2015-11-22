@@ -164,8 +164,9 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
                 return d;
             })
             .on("mouseover", function(d) {
-                var xPosition = parseFloat(d3.select(this).attr("cx")) + 25;
-                var yPosition = parseFloat(d3.select(this).attr("cy")) + 50;
+                var coordinates = d3.mouse(this);
+                /* var xPosition = parseFloat(d3.select(this).attr("cx")) + 50;
+                var yPosition = parseFloat(d3.select(this).attr("cy")) + 75; */
                 // Return properly formatted value
                 var formattedText = d + " (" + congress.data.members[d].party + "-" + congress.data.members[d].state + ")";
 
@@ -179,8 +180,8 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
                     // Move tooltip (code from: http://chimera.labs.oreilly.com/books/1230000000345/ch10.html#_html_div_tooltips)
                     // Update the tooltip position and value
                     d3.select("#tooltip")
-                        .style("left", xPosition + "px")
-                        .style("top", yPosition + "px")
+                        .style("left", coordinates[0] + "px")
+                        .style("top", coordinates[1] + "px")
                         .select("#value")
                         .text(formattedText);
 
