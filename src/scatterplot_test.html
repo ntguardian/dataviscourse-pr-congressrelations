@@ -17,12 +17,28 @@
         <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     </head>
     <body>
+        <script>
+            addMemberBtn = function() {
+                var val = d3.select("#memberInput").node().value;
+                congress.clearMembers();
+                congress.addMember(val);
+                dispatch.selectionChanged();
+            }
+
+            clearSelectionBtn = function() {
+                congress.clearMembers();
+                dispatch.selectionChanged();
+            }
+        </script>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <p>Hello world! This is HTML5 Boilerplate.</p>
+
+        <input type="text" id="memberInput">
+        <button type="button" onclick="addMemberBtn()">Select member</button>
+        <button type="button" onclick="clearSelectionBtn()">Clear selection</button>
         <!-- Scatterplot vis goes here -->
         <div id="scatterVis"><svg></svg></div>
 
@@ -31,6 +47,7 @@
         <script src="js/plugins.js"></script>
         <script src="js/congress.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/scatterVis.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

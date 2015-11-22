@@ -88,9 +88,46 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+/* From Mike Bostock: http://bl.ocks.org/d3noob/5d621a60e2d1d02086bf*/
+.axis text {
+    font: 10px sans-serif;
+}
 
+.axis line,
+.axis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
 
+/* Originally by Data Visualization for the Web: http://chimera.labs.oreilly.com/books/1230000000345/ch10.html */
 
+#tooltip {
+        position: absolute;
+        width: auto;
+        height: auto;
+        padding: 10px;
+        background-color: #b3b3b3;
+        opacity: 0.6;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+}
+
+#tooltip.hidden {
+        display: none;
+}
+
+#tooltip p {
+        margin: 0;
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 20px;
+}
 
 
 
