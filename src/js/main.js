@@ -23,7 +23,8 @@ changed.
 */
 dispatch = d3.dispatch("selectionChanged");
 dispatch.on("selectionChanged", function() {
-    scatterVis.update();
+    //scatterVis.update();
+    //mapVis.update();
 });
 
 // Data loading
@@ -40,6 +41,7 @@ d3.json("data/Senate114Metadata.json", function(md) {
 	    congress.getAgreementPercent();
 
 	    // Call visualizations
-        scatterVis = new ScatterVis(1000,700,30,40,50,30);
+        //scatterVis = new ScatterVis(1000,700,30,40,50,30);
+        mapVis = new MapVis(800, 500, 30, 30, 30, 30);
     });
 });

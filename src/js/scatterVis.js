@@ -35,7 +35,7 @@
 object. This function creates an instance of the
 scatterVis object (vis "new"), and the function
 itself defines the schema of the object. w sets the
-visualization's width, and h sets the svg's height.
+visualization's width, and h sets the vis's height.
 mt, mb, ml, and mr set the top, bottom, left, and
 right margins, respectively. (Notice that the SVG's
 width will be w + ml + mr, and its height will be
