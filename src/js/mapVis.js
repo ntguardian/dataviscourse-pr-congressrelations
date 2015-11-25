@@ -53,7 +53,7 @@ function MapVis(w, h, mt, mb, ml, mr) {
 		.attr("height", h + mt + mb)
 		.append("g")
 		.attr("transform", "translate(" + ml + "," + mt + ")");
-		
+
     // ScatterVis.projection:
     /* Controls the projection used by the map
     visualization (Albers USA projection). */
@@ -68,51 +68,96 @@ function MapVis(w, h, mt, mb, ml, mr) {
     self.path = d3.geo.path()
 		.projection(self.projection);
 
-    // MapVis.partyColor(party):
+    // MapVis.stateColor(state):
     /* This is a function that takes a string
-    representing a political party (either "D", "I",
-    or "R"), and outputs a string for identifying
-    the party that is associated with that color. */
-    self.partyColor = function(party) {
-	if (party == "R") {
-	    return "crimson";
-	} else if (party == "D") {
-	    return "dodgerblue";
-	} else {		// Think independents
-	    return "gold";
-	}
+    representing a state and outputs a string
+    representing a hexadecimal code for the color
+    for a state. This is some combination of hue and
+    brightness depending on the state's
+    delegation's party affiliation and agreement
+    with the selection. */
+    self.stateColor = function(state) {
+	    /* This method is somewhat complex and
+	    * difficult to understand. Basically,
+	    * brightness indicates how frequently any
+	    * member of the state's delegation agrees
+	    * with the selection, and hue indicates the
+	    * political leaning of the delegation.
+	    * Ignoring third parties and independents
+	    * for the moment, if the members of the
+	    * state's delegation are from different
+	    * parties, the hue of the color will be some
+	    * intermediate value between red and blue,
+	    * depending on whether the Democrat or the
+	    * Republican are more inclined to agree with
+	    * the selection. This is determined
+	    * subtractively, basically with CMYK logic,
+	    * which is then converted to an RGB color
+	    * and finally a hex string. */
+
+        // Delegation agreement determines lightness
+        var sat = congress.stateAgreementPercent[state];
+        // Initialize CMYK object that contains CM
+        var cmyk = {C : 0, M : 0, Y : 0, K : 0};
+        var rgbVal = {R : 0, G : 0, B : 0};
+        // Will contain how many Republicans, Democrats, and Independents are in the delegation
+        var rdi = {"R" : 0, "D" : 0, "I" : 0};
+
+        // Get delegation's agreement with selection
+        congress.metaData.delegations[state].forEach(function(member) {
+            rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
+        });
+
+        // Translate to "share of agreement", which will be used for determining hue
+        var agreeRatio = {"R" : (rdi.R / (rdi.R + rdi.D + rdi.I)),
+                          "D" : (rdi.D / (rdi.R + rdi.D + rdi.I)),
+                          "I" : (rdi.I / (rdi.R + rdi.D + rdi.I))};
+
+        // Finally, get the CMYK hue  based on agreeRatio
+        cmyk.C = sat * agreeRatio.D;
+        cmyk.M = sat * (agreeRatio.D + agreeRatio.R);
+        cmyk.Y = sat * (agreeRatio.R + agreeRatio.I);
+        cmyk.K = sat * 0;
+
+        // Convert to RGB
+        rgbVal.R = 255 * (1 - cmyk.C) * (1 - cmyk.K);
+        rgbVal.G = 255 * (1 - cmyk.M) * (1 - cmyk.K);
+        rgbVal.B = 255 * (1 - cmyk.Y) * (1 - cmyk.K);
+
+        var color = d3.rgb(rgbVal.R, rgbVal.G, rgbVal.B);
+        return color.toString();
     }
-    
+
     //Load in GeoJSON data
     d3.json("data/us-states.json", function (json) {
-	/* -- Jignesh's code (Keeping for reference, but I'm not doing things this way -- */
-        //Merge the senate data and GeoJSON
-        //Loop through once for each senate data value
-        /*for (var i = 0; i < data.length; i++) {
-            //Grab state name
-            var dataState = data[i].state;
-            //Grab data value, and convert from string to float
-            var dataValue = parseFloat(data[i].ideology);
-            //Find the corresponding state inside the GeoJSON
-            for (var j = 0; j < json.features.length; j++) {
-		var jsonState = json.features[j].properties.name;
-                if (dataState == jsonState) {
-		    //Copy the data value into the JSON
-                    json.features[j].properties.value = dataValue;
-                    break;
-                }
-            }
-        }*/
-        //Bind data and create one path per GeoJSON feature
-        self.svg.selectAll("path")
+        d3.json('data/states_hash.json', function (statesHash) {        // This file found here: https://gist.github.com/mshafrir/2646763
+            /* -- Jignesh's code (Keeping for reference, but I'm not doing things this way -- */
+            //Merge the senate data and GeoJSON
+            //Loop through once for each senate data value
+            /*for (var i = 0; i < data.length; i++) {
+             //Grab state name
+             var dataState = data[i].state;
+             //Grab data value, and convert from string to float
+             var dataValue = parseFloat(data[i].ideology);
+             //Find the corresponding state inside the GeoJSON
+             for (var j = 0; j < json.features.length; j++) {
+             var jsonState = json.features[j].properties.name;
+             if (dataState == jsonState) {
+             //Copy the data value into the JSON
+             json.features[j].properties.value = dataValue;
+             break;
+             }
+             }
+             }*/
+            //Bind data and create one path per GeoJSON feature
+            self.svg.selectAll("path")
                 .data(json.features)
                 .enter()
                 .append("path")
                 .attr("d", self.path)
                 .style("fill", function (d) {
-		    console.log(d);
-		    
-		    return "#ccc";
+                    return self.stateColor();
+                });
         });
     });
 }

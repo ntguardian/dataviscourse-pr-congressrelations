@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/src/css/main.css" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/js/congress.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/js/main.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/js/mapVis.js" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/js/scatterVis.js" charset="UTF-8" />
   </component>
 </project>

@@ -140,6 +140,8 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
         described by Mike Bostock here:
         http://bl.ocks.org/mbostock/3808218
         */
+        // Hide tooltip
+        d3.select("#tooltip").classed("hidden", true);
 
         // Attach and plot data
         // Data join
@@ -147,7 +149,6 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
             .data(congress.metaData.members.sort());	// This data is effectively a list of strings consisting of members' names who are not in the selection
 
         // Add new dots
-        // TODO: transitions (grow)
         dots.enter().append("circle")
             .attr("class", "dot")
             .style("fill", function(d) {
@@ -224,7 +225,6 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
             .attr('opacity', 1);
 
         // Remove existing dots no longer in selection
-        // TODO: transitions (shrink)
         dots.exit().transition().duration(1000)
             .attr("r", 0).remove();
     }
