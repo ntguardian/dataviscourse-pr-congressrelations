@@ -108,7 +108,7 @@ textarea {
         height: auto;
         padding: 10px;
         background-color: #b3b3b3;
-        opacity: 0.8;
+        opacity: 0.6;
         -webkit-border-radius: 10px;
         -moz-border-radius: 10px;
         border-radius: 10px;

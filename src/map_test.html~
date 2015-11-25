@@ -28,7 +28,39 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <script src="js/congress.js"></script>
-        <script src="js/main.js"></script>
+        <script src="js/mapVis.js"></script>
+        <!-- surrogate for main.js -->
+        <script>
+            // dispatch creation
+            /*
+             selectionChanged:
+             Reloads all views when the member selection has
+             changed.
+             */
+            dispatch = d3.dispatch("selectionChanged");
+            dispatch.on("selectionChanged", function() {
+                mapVis.update();
+            });
+
+            // Data loading
+            // Code inspired by: https://groups.google.com/forum/#!msg/d3-js/3Y9VHkOOdCM/YnmOPopWUxQJ
+
+            // First load and assign metadata
+            d3.json("data/Senate114Metadata.json", function(md) {
+                congress.metaData = md;
+
+                // Now load and assign record data
+                d3.json("data/SenateRecord114.json", function(cd) {
+                    congress.data = cd;
+                    congress.clearMembers();
+                    congress.getAgreementPercent();
+
+                    // Call visualizations
+                    mapVis = new MapVis(1000,700,30,40,50,30,1000);
+                });
+            });
+
+        </script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

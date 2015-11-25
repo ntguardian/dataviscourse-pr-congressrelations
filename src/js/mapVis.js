@@ -40,9 +40,10 @@ visualization's width, and h sets the vis's height.
 mt, mb, ml, and mr set the top, bottom, left, and
 right margins, respectively. (Notice that the SVG's
 width will be w + ml + mr, and its height will be
-h + mt + mb.) */
+h + mt + mb.) scale sets the scaling of the map
+(a bigger number implies a larger map). */
 
-function MapVis(w, h, mt, mb, ml, mr) {
+function MapVis(w, h, mt, mb, ml, mr, scale) {
     var self = this;
 
     // ScatterVis.svg:
@@ -59,7 +60,7 @@ function MapVis(w, h, mt, mb, ml, mr) {
     visualization (Albers USA projection). */
     self.projection = d3.geo.albersUsa()
                 .translate([w / 2, h / 2])
-                .scale([700]);
+                .scale([scale]);
 
     // ScatterVis.path
     /* This is an actual realization of the path
@@ -102,22 +103,44 @@ function MapVis(w, h, mt, mb, ml, mr) {
         var rgbVal = {R : 0, G : 0, B : 0};
         // Will contain how many Republicans, Democrats, and Independents are in the delegation
         var rdi = {"R" : 0, "D" : 0, "I" : 0};
+	var agreeRatio = {"R" : 0, "D" : 0, "I" : 0};
 
         // Get delegation's agreement with selection
-        congress.metaData.delegations[state].forEach(function(member) {
-            rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
-        });
+        try {
+	    congress.metaData.delegations[state].forEach(function(member) {
+		rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
+	    });
+	}
+	catch (TypeError) {
+	    // Do nothing; stick with default
+	}
 
-        // Translate to "share of agreement", which will be used for determining hue
-        var agreeRatio = {"R" : (rdi.R / (rdi.R + rdi.D + rdi.I)),
-                          "D" : (rdi.D / (rdi.R + rdi.D + rdi.I)),
-                          "I" : (rdi.I / (rdi.R + rdi.D + rdi.I))};
+	// Translate to "share of agreement", which will be used for determining hue
+	if (rdi.R + rdi.D + rdi.I != 0) {		// Prevent division by zero
+	    agreeRatio = {"R" : (rdi.R / (rdi.R + rdi.D + rdi.I)),
+			  "D" : (rdi.D / (rdi.R + rdi.D + rdi.I)),
+			  "I" : (rdi.I / (rdi.R + rdi.D + rdi.I))};
+	}
+                          
+        // The following are CMYK definitions of the colors that correspond the the parties
+        var RColor = {C : 0, M : 0, Y : 0, K : 0};
+        var DColor = {C : 0, M : 0, Y : 0, K : 0};
+        var IColor = {C : 0, M : 0, Y : 0, K : 0};
+
+        // Republicans: crimson
+        RColor.C = 0; RColor.M = .91; RColor.Y = .73; RColor.K = .14;
+        
+        // Democrats: dodgerblue
+        DColor.C = .88; DColor.M = .44; DColor.Y = 0; DColor.K = 0;
+        
+        // Independents: gold
+        IColor.C = 0; IColor.M = .16; IColor.Y = 1; IColor.K = 0;
 
         // Finally, get the CMYK hue  based on agreeRatio
-        cmyk.C = sat * agreeRatio.D;
-        cmyk.M = sat * (agreeRatio.D + agreeRatio.R);
-        cmyk.Y = sat * (agreeRatio.R + agreeRatio.I);
-        cmyk.K = sat * 0;
+        cmyk.C = sat * ((RColor.C * agreeRatio.R) + (DColor.C * agreeRatio.D) + (IColor.C * agreeRatio.I));
+        cmyk.M = sat * ((RColor.M * agreeRatio.R) + (DColor.M * agreeRatio.D) + (IColor.M * agreeRatio.I));
+        cmyk.Y = sat * ((RColor.Y * agreeRatio.R) + (DColor.Y * agreeRatio.D) + (IColor.Y * agreeRatio.I));
+        cmyk.K = sat * ((RColor.K * agreeRatio.R) + (DColor.K * agreeRatio.D) + (IColor.K * agreeRatio.I));
 
         // Convert to RGB
         rgbVal.R = 255 * (1 - cmyk.C) * (1 - cmyk.K);
@@ -127,37 +150,148 @@ function MapVis(w, h, mt, mb, ml, mr) {
         var color = d3.rgb(rgbVal.R, rgbVal.G, rgbVal.B);
         return color.toString();
     }
+    
+    // MapVis.tooltip():
+    /* The tooltip is a div element that is added to
+     the document when the object is created. It is
+     manipulated by the mouseover events of the dots
+     created and added to the scatterplot. */
+    self.tooltip = d3.select("body").append("div")
+        .attr('id', "mapVisTooltip")
+        .attr("class", "hidden")
+        .attr("transform", "translate(" + ml + "," + mt + ")")
+        .append("p")
+        .attr("id", "value");
 
     //Load in GeoJSON data
     d3.json("data/us-states.json", function (json) {
-        d3.json('data/states_hash.json', function (statesHash) {        // This file found here: https://gist.github.com/mshafrir/2646763
-            /* -- Jignesh's code (Keeping for reference, but I'm not doing things this way -- */
-            //Merge the senate data and GeoJSON
-            //Loop through once for each senate data value
-            /*for (var i = 0; i < data.length; i++) {
-             //Grab state name
-             var dataState = data[i].state;
-             //Grab data value, and convert from string to float
-             var dataValue = parseFloat(data[i].ideology);
-             //Find the corresponding state inside the GeoJSON
-             for (var j = 0; j < json.features.length; j++) {
-             var jsonState = json.features[j].properties.name;
-             if (dataState == jsonState) {
-             //Copy the data value into the JSON
-             json.features[j].properties.value = dataValue;
-             break;
-             }
-             }
-             }*/
-            //Bind data and create one path per GeoJSON feature
-            self.svg.selectAll("path")
-                .data(json.features)
-                .enter()
-                .append("path")
-                .attr("d", self.path)
-                .style("fill", function (d) {
-                    return self.stateColor();
-                });
-        });
+        //Merge the senate data and GeoJSON
+        //Bind data and create one path per GeoJSON feature
+        statePaths = self.svg.selectAll("path")
+			  .data(json.features)
+			  .enter()
+			  .append("path")
+			  .attr("d", self.path)
+			  .on("click", function(d) {
+			      // Make state's delegation the selection
+			      var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+			      
+			      congress.clearMembers();
+			      congress.addMember(congress.metaData.delegations[stateAbbrev]);
+			      dispatch.selectionChanged();
+			  })
+			  .on("mouseover", function(d) {
+			      var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+			      var delegation = congress.metaData.delegations[stateAbbrev];
+			      
+			      // Get text to display
+			      var formattedText = "";
+			      for (i = 0; i < delegation.length; i++) {
+				  formattedText = formattedText + delegation[i] +
+				      " (" + congress.data.members[delegation[i]].party + "-" + congress.data.members[delegation[i]].state + "): " +
+				      d3.round(100 * congress.memberAgreementPercent[delegation[i]]) + "%";
+				  if (i < delegation.length - 1) {
+				      formattedText = formattedText + "<br>";
+				  }
+			      }
+			      
+			      var coordinates = [d3.event.pageX + 10, d3.event.pageY - 20];
+			      
+			      // Fade clear
+			      d3.select(this).transition().duration(250)
+				  .attr("fill-opacity", .5);
+				  
+			      // Move tooltip (code from: http://chimera.labs.oreilly.com/books/1230000000345/ch10.html#_html_div_tooltips)
+			      // Update the tooltip position and value
+			      d3.select("#mapVisTooltip")
+				  .style("left", coordinates[0] + "px")
+				  .style("top", coordinates[1] - 15 + "px")
+				  .select("#value")
+				  .html(formattedText);
+
+			      // Show the tooltip
+			      d3.select("#mapVisTooltip").classed("hidden", false);
+			  })
+			  .on("mouseout", function(d) {
+			      d3.select(this).transition().duration(250)
+				  .attr("fill-opacity", 1);
+				  
+			      // Hide the tooltip
+			      d3.select("#mapVisTooltip").classed("hidden", true);
+			  });
+                
+	// MapVis.update():
+	/* This function tells mapVis to update the
+	visualization to update the values of the
+	map. This function is called when the vis is
+	first created and whenever the data needs to be
+	updated (this usually is coordinated by the
+	event handler defined in main.js). Note that the
+	map geoJSON file us-states.json MUST BE LOADED
+	in order for this to work. */
+	self.update = function() {
+	    statePaths
+		.sort(function(d) {
+			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+			var delegation = congress.metaData.delegations[stateAbbrev];
+			
+			// Check if a member of the state's delegation is in the selection
+			try {
+			    for (i = 0; i < delegation.length; i++) {
+				if (congress.selectedMembers.has(delegation[i])) {
+				    return 1;
+				}
+			    }
+			} catch (TypeError) {
+			    // Do nothing
+			}
+			
+			// Return normal color if no member is in selection
+			return 0;
+		})
+		.style("stroke", function(d) {
+			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+			var delegation = congress.metaData.delegations[stateAbbrev];
+			
+			// Check if a member of the state's delegation is in the selection
+			try {
+			    for (i = 0; i < delegation.length; i++) {
+				if (congress.selectedMembers.has(delegation[i])) {
+				    return "#9fff80";
+				}
+			    }
+			} catch (TypeError) {
+			    // Do nothing
+			}
+			
+			// Return normal color if no member is in selection
+			return "#000000";
+		})
+		.style("stroke-width", function(d) {
+			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+			var delegation = congress.metaData.delegations[stateAbbrev];
+			
+			// Check if a member of the state's delegation is in the selection
+			try {
+			    for (i = 0; i < delegation.length; i++) {
+				if (congress.selectedMembers.has(delegation[i])) {
+				    return 5 + "px";
+				}
+			    }
+			} catch (TypeError) {
+			    // Do nothing
+			}
+			
+			// Return normal color if no member is in selection
+			return 1 + "px";
+		})
+		.transition().duration(500)
+		.style("fill", function (d) {
+			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+			return self.stateColor(stateAbbrev);
+		});
+	}
+	
+	self.update();
     });
 }

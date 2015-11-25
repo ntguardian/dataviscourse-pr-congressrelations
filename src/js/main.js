@@ -41,7 +41,7 @@ d3.json("data/Senate114Metadata.json", function(md) {
 	    congress.getAgreementPercent();
 
 	    // Call visualizations
-        scatterVis = new ScatterVis(1000,700,30,40,50,30);
-        mapVis = new MapVis(800, 500, 30, 30, 30, 30);
+        scatterVis = new ScatterVis(500,350,30,40,50,30,.5);
+        mapVis = new MapVis(600,375,30,30,30,30,900);
     });
 });

@@ -22,13 +22,37 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <p>Hello world! This is HTML5 Boilerplate.</p>
+        <script>
+            addMemberBtn = function() {
+                var val = d3.select("#memberInput").node().value;
+                congress.clearMembers();
+                congress.addMember(val);
+                dispatch.selectionChanged();
+            }
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/{{JQUERY_VERSION}}/jquery.min.js"></script>
+            clearSelectionBtn = function() {
+                congress.clearMembers();
+                dispatch.selectionChanged();
+            }
+        </script>
+        <p>poliVis</p>
+        
+        <input type="text" id="memberInput">
+        <button type="button" onclick="addMemberBtn()">Select member</button>
+        <button type="button" onclick="clearSelectionBtn()">Clear selection</button>
+        <!-- Scatterplot vis goes here -->
+        <div>
+	  <div id="scatterVis"><svg></svg></div>
+	  <div id="mapVis"><svg></svg></div>
+        </div>
+
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/{{JQUERY_VERSION}}/jquery.min.js"></script> -->
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <script src="js/congress.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/scatterVis.js"></script>
+        <script src="js/mapVis.js"></script>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <script>

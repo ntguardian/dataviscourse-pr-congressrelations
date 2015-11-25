@@ -39,9 +39,9 @@ visualization's width, and h sets the vis's height.
 mt, mb, ml, and mr set the top, bottom, left, and
 right margins, respectively. (Notice that the SVG's
 width will be w + ml + mr, and its height will be
-h + mt + mb.) */
+h + mt + mb.) dotScale determines point size. */
 
-function ScatterVis(w, h, mt, mb, ml, mr) {
+function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
     var self = this;
 
     // ScatterVis.svg:
@@ -122,7 +122,8 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
      manipulated by the mouseover events of the dots
      created and added to the scatterplot. */
     self.tooltip = d3.select("body").append("div")
-        .attr('id', "tooltip")
+        //.attr('class', "tooltip")
+        .attr('id', "scatterVisTooltip")
         .attr("class", "hidden")
         .attr("transform", "translate(" + ml + "," + mt + ")")
         .append("p")
@@ -141,7 +142,7 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
         http://bl.ocks.org/mbostock/3808218
         */
         // Hide tooltip
-        d3.select("#tooltip").classed("hidden", true);
+        d3.select("#scatterVisTooltip").classed("hidden", true);
 
         // Attach and plot data
         // Data join
@@ -160,45 +161,46 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
             .attr("cy", function(d) {
                 return self.y(congress.memberAgreementPercent[d]);
             })
-            .attr("r", 8)
+            .attr("r", 8 * dotScale)
             .text(function(d) {
                 return d;
             })
             .on("mouseover", function(d) {
-                var coordinates = d3.mouse(this);
-                /* var xPosition = parseFloat(d3.select(this).attr("cx")) + 50;
-                var yPosition = parseFloat(d3.select(this).attr("cy")) + 75; */
+                var coordinates = [d3.event.pageX, d3.event.pageY];
+                console.log(coordinates)
                 // Return properly formatted value
-                var formattedText = d + " (" + congress.data.members[d].party + "-" + congress.data.members[d].state + ")";
+                var formattedText = d +
+		    " (" + congress.data.members[d].party + "-" + congress.data.members[d].state + "): " +
+		    d3.round(100 * congress.memberAgreementPercent[d]) + "%";
 
                 if (!congress.selectedMembers.has(d)) {
                     // Zoom and lighten
                     d3.select(this)
                         .transition().duration(400)
-                        .attr("r", 16)
+                        .attr("r", 16 * dotScale)
                         .attr("opacity",.7);
 
                     // Move tooltip (code from: http://chimera.labs.oreilly.com/books/1230000000345/ch10.html#_html_div_tooltips)
                     // Update the tooltip position and value
-                    d3.select("#tooltip")
+                    d3.select("#scatterVisTooltip")
                         .style("left", coordinates[0] + "px")
                         .style("top", coordinates[1] + "px")
                         .select("#value")
                         .text(formattedText);
 
                     // Show the tooltip
-                    d3.select("#tooltip").classed("hidden", false);
+                    d3.select("#scatterVisTooltip").classed("hidden", false);
                 }
             }).on("mouseout", function(d) {
                 if (!congress.selectedMembers.has(d)) {
                     // Return to defaults
                     d3.select(this)
                         .transition().duration(400)
-                        .attr("r", 8)
+                        .attr("r", 8 * dotScale)
                         .attr("opacity",1);
 
                     // Hide the tooltip
-                    d3.select("#tooltip").classed("hidden", true);
+                    d3.select("#scatterVisTooltip").classed("hidden", true);
                 }
             })
             .on("click", function(d) {
@@ -219,7 +221,7 @@ function ScatterVis(w, h, mt, mb, ml, mr) {
                 if (congress.selectedMembers.has(d)) {
                     return 0;
                 } else {
-                    return 8;
+                    return 8 * dotScale;
                 }
             })
             .attr('opacity', 1);
