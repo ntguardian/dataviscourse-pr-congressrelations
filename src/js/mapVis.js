@@ -103,25 +103,25 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
         var rgbVal = {R : 0, G : 0, B : 0};
         // Will contain how many Republicans, Democrats, and Independents are in the delegation
         var rdi = {"R" : 0, "D" : 0, "I" : 0};
-	var agreeRatio = {"R" : 0, "D" : 0, "I" : 0};
+        var agreeRatio = {"R" : 0, "D" : 0, "I" : 0};
 
-        // Get delegation's agreement with selection
-        try {
-	    congress.metaData.delegations[state].forEach(function(member) {
-		rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
-	    });
-	}
-	catch (TypeError) {
-	    // Do nothing; stick with default
-	}
+            // Get delegation's agreement with selection
+            try {
+            congress.metaData.delegations[state].forEach(function(member) {
+            rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
+            });
+        }
+        catch (TypeError) {
+            // Do nothing; stick with default
+        }
 
-	// Translate to "share of agreement", which will be used for determining hue
-	if (rdi.R + rdi.D + rdi.I != 0) {		// Prevent division by zero
-	    agreeRatio = {"R" : (rdi.R / (rdi.R + rdi.D + rdi.I)),
-			  "D" : (rdi.D / (rdi.R + rdi.D + rdi.I)),
-			  "I" : (rdi.I / (rdi.R + rdi.D + rdi.I))};
-	}
-                          
+        // Translate to "share of agreement", which will be used for determining hue
+        if (rdi.R + rdi.D + rdi.I != 0) {		// Prevent division by zero
+            agreeRatio = {"R" : (rdi.R / (rdi.R + rdi.D + rdi.I)),
+                  "D" : (rdi.D / (rdi.R + rdi.D + rdi.I)),
+                  "I" : (rdi.I / (rdi.R + rdi.D + rdi.I))};
+        }
+
         // The following are CMYK definitions of the colors that correspond the the parties
         var RColor = {C : 0, M : 0, Y : 0, K : 0};
         var DColor = {C : 0, M : 0, Y : 0, K : 0};
@@ -129,10 +129,10 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 
         // Republicans: crimson
         RColor.C = 0; RColor.M = .91; RColor.Y = .73; RColor.K = .14;
-        
+
         // Democrats: dodgerblue
         DColor.C = .88; DColor.M = .44; DColor.Y = 0; DColor.K = 0;
-        
+
         // Independents: gold
         IColor.C = 0; IColor.M = .16; IColor.Y = 1; IColor.K = 0;
 
@@ -150,7 +150,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
         var color = d3.rgb(rgbVal.R, rgbVal.G, rgbVal.B);
         return color.toString();
     }
-    
+
     // MapVis.tooltip():
     /* The tooltip is a div element that is added to
      the document when the object is created. It is
@@ -175,7 +175,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			  .on("click", function(d) {
 			      // Make state's delegation the selection
 			      var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
-			      
+
 			      congress.clearMembers();
 			      congress.addMember(congress.metaData.delegations[stateAbbrev]);
 			      dispatch.selectionChanged();
@@ -183,7 +183,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			  .on("mouseover", function(d) {
 			      var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			      var delegation = congress.metaData.delegations[stateAbbrev];
-			      
+
 			      // Get text to display
 			      var formattedText = "";
 			      for (i = 0; i < delegation.length; i++) {
@@ -194,13 +194,13 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 				      formattedText = formattedText + "<br>";
 				  }
 			      }
-			      
+
 			      var coordinates = [d3.event.pageX + 10, d3.event.pageY - 20];
-			      
+
 			      // Fade clear
 			      d3.select(this).transition().duration(250)
 				  .attr("fill-opacity", .5);
-				  
+
 			      // Move tooltip (code from: http://chimera.labs.oreilly.com/books/1230000000345/ch10.html#_html_div_tooltips)
 			      // Update the tooltip position and value
 			      d3.select("#mapVisTooltip")
@@ -215,11 +215,11 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			  .on("mouseout", function(d) {
 			      d3.select(this).transition().duration(250)
 				  .attr("fill-opacity", 1);
-				  
+
 			      // Hide the tooltip
 			      d3.select("#mapVisTooltip").classed("hidden", true);
 			  });
-                
+
 	// MapVis.update():
 	/* This function tells mapVis to update the
 	visualization to update the values of the
@@ -234,7 +234,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 		.sort(function(d) {
 			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			var delegation = congress.metaData.delegations[stateAbbrev];
-			
+
 			// Check if a member of the state's delegation is in the selection
 			try {
 			    for (i = 0; i < delegation.length; i++) {
@@ -245,14 +245,14 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			} catch (TypeError) {
 			    // Do nothing
 			}
-			
+
 			// Return normal color if no member is in selection
 			return 0;
 		})
 		.style("stroke", function(d) {
 			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			var delegation = congress.metaData.delegations[stateAbbrev];
-			
+
 			// Check if a member of the state's delegation is in the selection
 			try {
 			    for (i = 0; i < delegation.length; i++) {
@@ -263,14 +263,14 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			} catch (TypeError) {
 			    // Do nothing
 			}
-			
+
 			// Return normal color if no member is in selection
 			return "#000000";
 		})
 		.style("stroke-width", function(d) {
 			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			var delegation = congress.metaData.delegations[stateAbbrev];
-			
+
 			// Check if a member of the state's delegation is in the selection
 			try {
 			    for (i = 0; i < delegation.length; i++) {
@@ -281,7 +281,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			} catch (TypeError) {
 			    // Do nothing
 			}
-			
+
 			// Return normal color if no member is in selection
 			return 1 + "px";
 		})
@@ -291,7 +291,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			return self.stateColor(stateAbbrev);
 		});
 	}
-	
+
 	self.update();
     });
 }
