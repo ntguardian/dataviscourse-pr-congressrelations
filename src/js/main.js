@@ -40,6 +40,13 @@ d3.json("data/Senate114Metadata.json", function(md) {
         congress.clearMembers();
 	    congress.getAgreementPercent();
 
+            // Code from: https://jqueryui.com/autocomplete/#maxheight
+            $(function() {
+                $( "#memberInput" ).autocomplete({
+                    source: congress.metaData.members
+                });
+            });
+
 	    // Call visualizations
         scatterVis = new ScatterVis(500,350,30,40,50,30,.5);
         mapVis = new MapVis(600,375,30,30,30,30,900);

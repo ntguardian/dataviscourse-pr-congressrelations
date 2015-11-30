@@ -12,6 +12,7 @@ html {
     color: #222;
     font-size: 1em;
     line-height: 1.4;
+    padding: 10px 10%;
 }
 
 /*
@@ -88,6 +89,54 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+#title {
+    margin-bottom: 40px;
+}
+
+#title h1 {
+    font-family: 'Pinyon Script', cursive;
+    font-weight: normal;
+    color: rgba(0, 0, 128, 1);
+    font-size: 100px;
+    text-align: center;
+    margin-bottom: 0px;
+}
+#title h2 {
+    font-family: 'EB Garamond', serif;
+    color: rgba(0, 0, 128, 1);
+    font-size: 25px;
+    text-align: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+/* Gradient transparent - color - transparent
+ Source: https://css-tricks.com/examples/hrs/ */
+
+#title hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 128, 0), rgba(0, 0, 128, 0.75), rgba(0, 0, 128, 0));
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 128, 0), rgba(0, 0, 128, 0.75), rgba(0, 0, 128, 0));
+}
+
+#desc p {
+    font-family: 'EB Garamond', serif;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+#ui {
+    margin-left: 100px;
+}
+
 /* From Mike Bostock: http://bl.ocks.org/d3noob/5d621a60e2d1d02086bf*/
 .axis text {
     font: 10px sans-serif;
@@ -129,6 +178,10 @@ textarea {
         line-height: 20px;
 }
 
+#scatterVis svg, #mapVis svg {
+    margin: 0 auto;
+}
+
 
 path {
         fill: none;
@@ -136,7 +189,28 @@ path {
         stroke: #222;
 }
 
+/* This code from: https://jqueryui.com/autocomplete/#maxheight */
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    font-family: 'EB Garamond', serif;
+    font-size: small;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
+}
 
+.ui-memberSelect label {
+    font-family: 'EB Garamond', serif;
+    font-weight: bold;
+    color: rgba(0, 0, 128, 1);
+    font-size: larger;
+}
 
 
 

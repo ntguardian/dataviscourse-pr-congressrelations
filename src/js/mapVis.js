@@ -105,10 +105,12 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
         var rdi = {"R" : 0, "D" : 0, "I" : 0};
         var agreeRatio = {"R" : 0, "D" : 0, "I" : 0};
 
-            // Get delegation's agreement with selection
-            try {
+        // Get delegation's agreement with selection
+        try {
             congress.metaData.delegations[state].forEach(function(member) {
-            rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
+                if (congress.nonselectedMembers.has(member)) {
+                    rdi[congress.data.members[member].party] += congress.memberAgreementPercent[member];
+                }
             });
         }
         catch (TypeError) {
