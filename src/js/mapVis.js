@@ -49,9 +49,14 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
     // ScatterVis.svg:
     /* Simply the svg used by scatterVis, where the
     visualization is actually displayed. */
-    self.svg = d3.select("#mapVis").select("svg")
-		.attr("width", w + ml + mr)
-		.attr("height", h + mt + mb)
+    self.svg = d3.select("#mapVis")
+		.classed("svg-container", true)
+		.select("svg")
+		.attr("preserveAspectRatio", "xMinYMin meet")
+		.attr("viewBox", "0 0 " + (w + ml + mr) + " " + (h + mt + mb))
+		//.attr("width", w + ml + mr)
+		//.attr("height", h + mt + mb)
+		.classed("svg-content-responsive", true)
 		.append("g")
 		.attr("transform", "translate(" + ml + "," + mt + ")");
 
@@ -178,7 +183,10 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			      // Make state's delegation the selection
 			      var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 
-			      congress.clearMembers();
+			      
+			      if (!document.getElementById("keepSelection").checked) {
+				  congress.clearMembers();
+			      }
 			      congress.addMember(congress.metaData.delegations[stateAbbrev]);
 			      dispatch.selectionChanged();
 			  })
@@ -287,7 +295,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			// Return normal color if no member is in selection
 			return 1 + "px";
 		})
-		.transition().duration(500)
+		.transition().duration(350)
 		.style("fill", function (d) {
 			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			return self.stateColor(stateAbbrev);

@@ -25,6 +25,8 @@ dispatch = d3.dispatch("selectionChanged");
 dispatch.on("selectionChanged", function() {
     scatterVis.update();
     mapVis.update();
+    // Update the p containing the list of members
+    d3.select("#memberList").text(selectionStringGen());
 });
 
 // Data loading
@@ -48,7 +50,24 @@ d3.json("data/Senate114Metadata.json", function(md) {
             });
 
 	    // Call visualizations
-        scatterVis = new ScatterVis(500,350,30,40,50,30,.5);
-        mapVis = new MapVis(600,375,30,30,30,30,900);
+	    scatterVis = new ScatterVis(400,300,30,40,50,30,.4);
+	    mapVis = new MapVis(600,375,30,30,30,30,900);
+        
+	    // A function for generating a string with the members in the selection
+	    selectionStringGen = function() {
+		var selString = "";
+		if (congress.selectedMembers.size < 1) {
+		    return "No one selected (chart shows victory rate)";
+		}
+		congress.selectedMembers.forEach(function(member) {
+		    selString = selString + 
+				member + " (" +
+				congress.data.members[member].party + 
+				"-" + congress.data.members[member].state +
+				"); "
+		});
+		
+		return selString;
+            }
     });
 });

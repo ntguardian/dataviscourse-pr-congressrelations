@@ -47,9 +47,14 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
     // ScatterVis.svg:
     /* Simply the svg used by scatterVis, where the
     visualization is actually displayed. */
-    self.svg = d3.select("#scatterVis").select("svg")
-		.attr("width", w + ml + mr)
-		.attr("height", h + mt + mb)
+    self.svg = d3.select("#scatterVis")
+		.classed("svg-container", true)
+		.select("svg")
+		.attr("preserveAspectRatio", "xMinYMin meet")
+		.attr("viewBox", "0 0 " + (w + ml + mr) + " " + (h + mt + mb))
+		//.attr("width", w + ml + mr)
+		//.attr("height", h + mt + mb)
+		.classed("svg-content-responsive", true)
 		.append("g")
 		.attr("transform", "translate(" + ml + "," + mt + ")");
 
@@ -204,7 +209,9 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
                 }
             })
             .on("click", function(d) {
-                congress.clearMembers();
+                if (!document.getElementById("keepSelection").checked) {
+		    congress.clearMembers();
+                }
                 congress.addMember([d]);
                 dispatch.selectionChanged();
             });

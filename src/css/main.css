@@ -100,6 +100,7 @@ textarea {
     font-size: 100px;
     text-align: center;
     margin-bottom: 0px;
+    line-height: .85;
 }
 #title h2 {
     font-family: 'EB Garamond', serif;
@@ -127,14 +128,43 @@ hr {
     background-image: linear-gradient(to right, rgba(0, 0, 128, 0), rgba(0, 0, 128, 0.75), rgba(0, 0, 128, 0));
 }
 
-#desc p {
+#desc p ol {
     font-family: 'EB Garamond', serif;
     padding-left: 30px;
     padding-right: 30px;
 }
 
+#desc ol {
+    font-size: 10px;
+}
+
+#desc h1 {
+    font-family: 'EB Garamond', serif;
+    text-align: center;
+    font-weight: bold;
+    color: rgba(0, 0, 128, 1);
+    font-size: 30px;
+}
+
 #ui {
     margin-left: 100px;
+}
+
+#ui h1 {
+    font-family: 'EB Garamond', serif;
+    font-weight: bold;
+    color: rgba(0, 0, 128, 1);
+    font-size: large;
+    margin-bottom: 2px;
+}
+
+#ui p {
+    font-family: 'EB Garamond', serif;
+    size: 6px;
+    color: #6D7B8D;
+    margin-top: 2px;
+    margin-left: 15px;
+    margin-right: 100px;
 }
 
 /* From Mike Bostock: http://bl.ocks.org/d3noob/5d621a60e2d1d02086bf*/
@@ -178,10 +208,21 @@ hr {
         line-height: 20px;
 }
 
-#scatterVis svg, #mapVis svg {
-    margin: 0 auto;
+.svg-container {
+    display: inline-block;
+    position: relative;
+    width: 50%;
+    padding-bottom: 40%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
 }
 
+.svg-content-responsive {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
 
 path {
         fill: none;

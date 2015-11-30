@@ -8,25 +8,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link href='https://fonts.googleapis.com/css?family=Pinyon+Script' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=EB+Garamond' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
         <!-- Place favicon.ico in the root directory -->
 
-        <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/main.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
         <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    </head>
-    <body>
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-        <!-- Add your site or application content here -->
+        <script src="js/plugins.js"></script>
+        <script src="js/congress.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/scatterVis.js"></script>
+        <script src="js/mapVis.js"></script>
         <script>
             addMemberBtn = function() {
                 var val = d3.select("#memberInput").node().value;
-                congress.clearMembers();
-                congress.addMember(val);
+                if (!document.getElementById("keepSelection").checked) {
+		    congress.clearMembers();
+                }
+                try {
+		    congress.addMember(val);
+                } catch (RangeError) {
+		    alert(val + " is not a valid member.");
+                }
                 dispatch.selectionChanged();
             }
 
@@ -35,33 +44,68 @@
                 dispatch.selectionChanged();
             }
         </script>
-        <p>poliVis</p>
-        
-        <input type="text" id="memberInput">
-        <button type="button" onclick="addMemberBtn()">Select member</button>
-        <button type="button" onclick="clearSelectionBtn()">Clear selection</button>
-        <!-- Scatterplot vis goes here -->
-        <div>
-	  <div id="scatterVis"><svg></svg></div>
-	  <div id="mapVis"><svg></svg></div>
+    </head>
+    <body>
+        <!-- Add your site or application content here -->
+
+        <div id="title">
+            <h1>Congressional Political Relationships</h1>
+            <hr>
+            <h2>By Curtis Miller and Jignesh Rawal</h2>
+            <hr>
+        </div>
+        <div id="visualizations">
+            <div id="scatterVis" style="float:left"><svg></svg></div>
+            <div id="mapVis" style="float:right"><svg></svg></div>
+        </div>
+        <div id="ui">
+            <div class="ui-memberSelect">
+                <label for="memberInput">Member: </label>
+                <input id="memberInput">
+                <button type="button" onclick="addMemberBtn()">Select member</button>
+                <button type="button" onclick="clearSelectionBtn()">Clear selection</button><br>
+                <label><input type = "checkbox" id="keepSelection" value="checked">Keep existing selection</label>
+                <br>
+            </div>
+            <h1>Selection</h1>
+            <p id="memberList">No one selected (chart shows victory rate)</p>
+        </div>
+        <hr>
+        <div id="desc">
+	    <h1>Introduction</h1>
+	    <p>The U.S. Congress is a complex entity, with 100 senators and 435 members of the House of Representatives, or 535 members total. While political party is certainly a very important factor in terms of how an individual congressman will vote, it is not a purely determining factor as in other countries where parties often vote as blocks and legislators merely occupy a seat for their political party. Congressmen, especially in the Senate, often act individually, and taking a position contrary to the party's position is not unheard of (although Congress is becoming more polarized and crossing party lines is less common). Thus, the political structure of Congress is much more complex than simply which party holds the majority.</p>
+	    <p>This project aims to visualize congressional voting patterns in terms of how similarly congressmen vote. If two congressmen tend to vote the same on bills or tend to cosponsor the same legislation, they may be considered "similar". When thinking about relationships between members of Congress in this way, we would like to visualize these relationships.</p>
+	    
+	    <h1>Visualizations</h1>
+	    <p>Currently, this project visualizes voting patterns in the U.S. Senate during the 115<sup>th</sup> Congress.<sup>1</sup>
+	    <p>Above is a scatter plot and map useful for visualizing congressional similarity and relationships. The scatter plot shows each member of the congressional body as a point, with the vertical position denoting agreement<sup>2</sup> with the selection, and horizontal position indicating political ideology<sup>3</sup>. The map encodes a state's congressional delegation's agreement<sup>4</sup> with the selection as lightness (the lighter a state's color, the less its delegation agreed with the selection), and the political affiliation of the delegation as hue, with blue denoting Democrats, red Republicans, and yellow independents. In the case of a mixed delegation, the hue will appear redder or bluer (or yellower) depending on whether state Democrats or Republicans (or independents) agree more frequently with the selection.</p>
+	    <p>When the selection is empty (the starting state), the visualizations show every member's "victory rate"<sup>5</sup>, or the rate at which a member votes with the winning side of a motion. Members can be added to the selection by clicking a point in the scatter plot or by entering their name in the text box. Clicking a state in the map will set the selection to that state's congressional delegation. The existing selection will be replaced with the new selection unless "Keep existing selection" is checked, in which case new members are added to the existing selection. Click the "Clear selection" button at any time to empty the current selection.</p>
+	    
+	    <h1>Observations</h1>
+	    <p>Write observations here once the entire dataset has been downloaded and loaded into the visualization.</p>
+	    
+	    <h1>Conclusion</h1>
+	    <p>We hope to expand this project in the future to include the House of Representatives and past Congresses. In the meantime, we hope you have found this visualization enlightening, informative, and entertaining.</p>
+	    <p>Interested users can read the <a href="https://github.com/ntguardian/dataviscourse-pr-congressrelations/raw/master/CS6630ProjectNotebook.pdf">project journal</a>, which describes the steps taken to create this visualization along with code documentation. The project's github repository is available <a href="https://github.com/ntguardian/dataviscourse-pr-congressrelations">here</a>.</p>
+	    
+	    <h1>Notes</h1>
+	    <ol>
+		<li>The data was obtained from the <a href="http://www.senate.gov/legislative/votes.htm">U.S. Senate Website</a>.</li>
+		<li>"Agreement" in the case of an individual member means that the member cast the same vote as every member in the selection, whenever the selection was in complete agreement. Votes where at least one of the members in the selection were recorded as "not voting" are excluded.</li>
+		<li>Political ideology is computed using a method very similar to common ideological scoring methods such as the NOMINATE method. It employes a dimensionality reduction method.</li>
+		<li>More accurately, the lightness of a state's color indicates the rate at which either member of the state's delegation voted in agreement with the selection, with a lighter color indicating a lower rate of agreement.</li>
+		<li>"Victory rate" means being a member of the winning coalition on any motion.</li>
+	    </ol>
         </div>
 
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/{{JQUERY_VERSION}}/jquery.min.js"></script> -->
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
-        <script src="js/plugins.js"></script>
-        <script src="js/congress.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/scatterVis.js"></script>
-        <script src="js/mapVis.js"></script>
-
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
+        <!-- <script>
             (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
             function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
             e=o.createElement(i);r=o.getElementsByTagName(i)[0];
             e.src='https://www.google-analytics.com/analytics.js';
             r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
             ga('create','UA-XXXXX-X','auto');ga('send','pageview');
-        </script>
+        </script> -->
     </body>
 </html>

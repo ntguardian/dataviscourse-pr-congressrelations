@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
+        <title>Congressional Political Relationships</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -28,8 +28,14 @@
         <script>
             addMemberBtn = function() {
                 var val = d3.select("#memberInput").node().value;
-                congress.clearMembers();
-                congress.addMember(val);
+                if (!document.getElementById("keepSelection").checked) {
+		    congress.clearMembers();
+                }
+                try {
+		    congress.addMember(val);
+                } catch (RangeError) {
+		    alert(val + " is not a valid member.");
+                }
                 dispatch.selectionChanged();
             }
 
@@ -48,24 +54,48 @@
             <h2>By Curtis Miller and Jignesh Rawal</h2>
             <hr>
         </div>
-        <div id="desc">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum rhoncus augue eget gravida. Suspendisse potenti. Nulla bibendum dapibus metus, vel facilisis magna feugiat non. Phasellus cursus quam sit amet ligula molestie venenatis. Phasellus non pellentesque purus. Maecenas vulputate scelerisque viverra. Nunc iaculis velit quis tristique bibendum.
-            </p>
-
-          <p>Phasellus vulputate lacus vitae elit tempor, posuere sodales neque mattis. Nunc viverra dolor quis ipsum scelerisque dictum. Vivamus odio velit, bibendum a fringilla et, finibus porttitor odio. Donec sit amet enim vulputate, dictum sapien ut, aliquet dui. Pellentesque convallis orci non arcu dapibus, sit amet volutpat tellus vehicula. Nunc placerat, tellus id malesuada rhoncus, metus enim laoreet nisl, quis dignissim orci sem nec odio. In lacinia malesuada eros, vel fermentum ex pharetra a. In neque turpis, viverra sit amet erat eu, pulvinar placerat lacus. Vestibulum vehicula augue ac urna bibendum, in interdum orci efficitur. Nulla in sem rutrum, viverra augue sollicitudin, dictum ligula. Nullam in enim nisl. Nunc felis libero, ultricies et est in, molestie ultrices nibh. Ut eget sem ex. Suspendisse potenti.</p>
+        <div id="visualizations">
+            <div id="scatterVis" style="float:left"><svg></svg></div>
+            <div id="mapVis" style="float:right"><svg></svg></div>
         </div>
-        <hr>
         <div id="ui">
             <div class="ui-memberSelect">
                 <label for="memberInput">Member: </label>
                 <input id="memberInput">
                 <button type="button" onclick="addMemberBtn()">Select member</button>
-                <button type="button" onclick="clearSelectionBtn()">Clear selection</button>
+                <button type="button" onclick="clearSelectionBtn()">Clear selection</button><br>
+                <label><input type = "checkbox" id="keepSelection" value="checked">Keep existing selection</label>
+                <br>
             </div>
+            <h1>Selection</h1>
+            <p id="memberList">No one selected (chart shows victory rate)</p>
         </div>
-        <div id="visualizations">
-            <div id="scatterVis", style="float:left"><svg></svg></div>
-            <div id="mapVis" style="float:right"><svg></svg></div>
+        <hr>
+        <div id="desc">
+	    <h1>Introduction</h1>
+	    <p>The U.S. Congress is a complex entity, with 100 senators and 435 members of the House of Representatives, or 535 members total. While political party is certainly a very important factor in terms of how an individual congressman will vote, it is not a purely determining factor as in other countries where parties often vote as blocks and legislators merely occupy a seat for their political party. Congressmen, especially in the Senate, often act individually, and taking a position contrary to the party's position is not unheard of (although Congress is becoming more polarized and crossing party lines is less common). Thus, the political structure of Congress is much more complex than simply which party holds the majority.</p>
+	    <p>This project aims to visualize congressional voting patterns in terms of how similarly congressmen vote. If two congressmen tend to vote the same on bills or tend to cosponsor the same legislation, they may be considered "similar". When thinking about relationships between members of Congress in this way, we would like to visualize these relationships.</p>
+	    
+	    <h1>Visualizations</h1>
+	    <p>Currently, this project visualizes voting patterns in the U.S. Senate during the 115<sup>th</sup> Congress.<sup>1</sup>
+	    <p>Above is a scatter plot and map useful for visualizing congressional similarity and relationships. The scatter plot shows each member of the congressional body as a point, with the vertical position denoting agreement<sup>2</sup> with the selection, and horizontal position indicating political ideology<sup>3</sup>. The map encodes a state's congressional delegation's agreement<sup>4</sup> with the selection as lightness (the lighter a state's color, the less its delegation agreed with the selection), and the political affiliation of the delegation as hue, with blue denoting Democrats, red Republicans, and yellow independents. In the case of a mixed delegation, the hue will appear redder or bluer (or yellower) depending on whether state Democrats or Republicans (or independents) agree more frequently with the selection.</p>
+	    <p>When the selection is empty (the starting state), the visualizations show every member's "victory rate"<sup>5</sup>, or the rate at which a member votes with the winning side of a motion. Members can be added to the selection by clicking a point in the scatter plot or by entering their name in the text box. Clicking a state in the map will set the selection to that state's congressional delegation. The existing selection will be replaced with the new selection unless "Keep existing selection" is checked, in which case new members are added to the existing selection. Click the "Clear selection" button at any time to empty the current selection.</p>
+	    
+	    <h1>Observations</h1>
+	    <p>Write observations here once the entire dataset has been downloaded and loaded into the visualization.</p>
+	    
+	    <h1>Conclusion</h1>
+	    <p>We hope to expand this project in the future to include the House of Representatives and past Congresses. In the meantime, we hope you have found this visualization enlightening, informative, and entertaining.</p>
+	    <p>Interested users can read the <a href="https://github.com/ntguardian/dataviscourse-pr-congressrelations/raw/master/CS6630ProjectNotebook.pdf">project journal</a>, which describes the steps taken to create this visualization along with code documentation. The project's github repository is available <a href="https://github.com/ntguardian/dataviscourse-pr-congressrelations">here</a>.</p>
+	    
+	    <h1>Notes</h1>
+	    <ol>
+		<li>The data was obtained from the <a href="http://www.senate.gov/legislative/votes.htm">U.S. Senate Website</a>.</li>
+		<li>"Agreement" in the case of an individual member means that the member cast the same vote as every member in the selection, whenever the selection was in complete agreement. Votes where at least one of the members in the selection were recorded as "not voting" are excluded.</li>
+		<li>Political ideology is computed using a method very similar to common ideological scoring methods such as the NOMINATE method. It employes a dimensionality reduction method.</li>
+		<li>More accurately, the lightness of a state's color indicates the rate at which either member of the state's delegation voted in agreement with the selection, with a lighter color indicating a lower rate of agreement.</li>
+		<li>"Victory rate" means being a member of the winning coalition on any motion.</li>
+	    </ol>
         </div>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
