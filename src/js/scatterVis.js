@@ -172,7 +172,7 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
             })
             .on("mouseover", function(d) {
                 var coordinates = [d3.event.pageX, d3.event.pageY];
-                console.log(coordinates)
+                //console.log(coordinates)
                 // Return properly formatted value
                 var formattedText = d +
 		    " (" + congress.data.members[d].party + "-" + congress.data.members[d].state + "): " +

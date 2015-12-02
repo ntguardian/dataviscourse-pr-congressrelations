@@ -128,7 +128,7 @@ hr {
     background-image: linear-gradient(to right, rgba(0, 0, 128, 0), rgba(0, 0, 128, 0.75), rgba(0, 0, 128, 0));
 }
 
-#desc p ol {
+#desc p, ol {
     font-family: 'EB Garamond', serif;
     padding-left: 30px;
     padding-right: 30px;

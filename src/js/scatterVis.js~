@@ -209,7 +209,9 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
                 }
             })
             .on("click", function(d) {
-                congress.clearMembers();
+                if (!document.getElementById("keepSelection").checked) {
+		    congress.clearMembers();
+                }
                 congress.addMember([d]);
                 dispatch.selectionChanged();
             });
