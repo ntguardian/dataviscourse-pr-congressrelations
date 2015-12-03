@@ -177,6 +177,30 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
                 var formattedText = d +
 		    " (" + congress.data.members[d].party + "-" + congress.data.members[d].state + "): " +
 		    d3.round(100 * congress.memberAgreementPercent[d]) + "%";
+		    
+		/* It is possible for two members to have identical voting
+		patterns and therefore for a point to cover others; detect
+		other memebers at this location, and add their information
+		to the tooltip. */
+		// First, find and list other members at this location
+		var otherMembersHere = [];
+		congress.metaData.members.forEach(function(mem) {
+		    if (mem != d &
+			!congress.selectedMembers.has(mem) &
+			congress.data.members[mem].ideology == congress.data.members[d].ideology &
+			congress.memberAgreementPercent[mem] == congress.memberAgreementPercent[d]) {
+			
+			otherMembersHere.push(mem);
+		    }
+		});
+		
+		// If there were other members at this location, add their information to the tooltip string
+		otherMembersHere.forEach(function(mem) {
+		    formattedText = formattedText + "<br>";
+		    formattedText = formattedText + mem +
+			" (" + congress.data.members[mem].party + "-" + congress.data.members[mem].state + "): " +
+			d3.round(100 * congress.memberAgreementPercent[mem]) + "%";
+		});
 
                 if (!congress.selectedMembers.has(d)) {
                     // Zoom and lighten
@@ -191,11 +215,16 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
                         .style("left", coordinates[0] + "px")
                         .style("top", coordinates[1] + "px")
                         .select("#value")
-                        .text(formattedText);
+                        .html(formattedText);
 
                     // Show the tooltip
                     d3.select("#scatterVisTooltip").classed("hidden", false);
                 }
+                
+                // Highlight other elements in the visualization
+                // The event handler handles this; call the event membersHovered
+                otherMembersHere.push(d);
+                dispatch.membersHovered(otherMembersHere);
             }).on("mouseout", function(d) {
                 if (!congress.selectedMembers.has(d)) {
                     // Return to defaults
@@ -207,6 +236,7 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
                     // Hide the tooltip
                     d3.select("#scatterVisTooltip").classed("hidden", true);
                 }
+                dispatch.membersUnhovered();
             })
             .on("click", function(d) {
                 if (!document.getElementById("keepSelection").checked) {

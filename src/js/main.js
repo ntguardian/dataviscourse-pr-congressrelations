@@ -16,17 +16,84 @@
   */
 
 // dispatch creation
+dispatch = d3.dispatch("selectionChanged", "membersHovered", "membersUnhovered");
+
 /*
-selectionChanged:
+dispatch.selectionChanged():
 Reloads all views when the member selection has
 changed.
 */
-dispatch = d3.dispatch("selectionChanged");
 dispatch.on("selectionChanged", function() {
     scatterVis.update();
     mapVis.update();
     // Update the p containing the list of members
     d3.select("#memberList").text(selectionStringGen());
+});
+
+/*
+dispatch.membersHovered(members):
+Applies the class "hovered" to dots in the
+scatterplot and states in the map that have members
+being hovered over by the mouse. Takes a set called
+"members", which contains the last names of every
+member being hovered.
+*/
+dispatch.on("membersHovered", function(members) {
+    members = new Set(members);
+    console.log(members);
+    
+    // Highlight dots
+    scatterVis.svg.selectAll(".dot").classed("hovered", function(d) {
+	if (members.has(d)) {
+	    return true;
+	} else {
+	    return false;
+	}
+    });
+    
+    // Highlight states
+    mapVis.statePaths
+	.sort(function(d) {
+	    var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+	    var delegation = congress.metaData.delegations[stateAbbrev];
+	    try {
+		for (i = 0; i < delegation.length; i++) {
+			if (members.has(delegation[i]) |
+			    congress.selectedMembers.has(delegation[i])) {
+			    return 1;
+			}
+		}
+	    } catch (TypeError) {
+		// Do nothing
+	    }
+	    return 0;
+	})
+	.classed("hovered", function(d) {
+	    var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
+	    var delegation = congress.metaData.delegations[stateAbbrev];
+	    //console.log(delegation, state);
+	    
+	    try {
+		for (i = 0; i < delegation.length; i++) {
+		    if (members.has(delegation[i])) {
+			return true;
+		    }
+		}
+	    } catch (TypeError) {
+		    // Do nothing
+	    }
+	    return false;
+	});
+});
+
+/*
+dispatch.membersUnhovered():
+Removes the class "hovered" from every state and dot
+in the scatterplot.
+*/
+dispatch.on("membersUnhovered", function() {
+    scatterVis.svg.selectAll(".dot").classed({"hovered": false, "dot": true});
+    mapVis.statePaths.classed("hovered", false);
 });
 
 // Data loading
@@ -50,14 +117,14 @@ d3.json("data/Senate114Metadata.json", function(md) {
             });
 
 	    // Call visualizations
-	    scatterVis = new ScatterVis(400,300,30,40,50,30,.4);
+	    scatterVis = new ScatterVis(400,300,30,40,50,30,.35);
 	    mapVis = new MapVis(600,375,30,30,30,30,900);
         
 	    // A function for generating a string with the members in the selection
 	    selectionStringGen = function() {
 		var selString = "";
 		if (congress.selectedMembers.size < 1) {
-		    return "No one selected (chart shows victory rate)";
+		    return "No one selected (charts shows victory rate)";
 		}
 		congress.selectedMembers.forEach(function(member) {
 		    selString = selString + 

@@ -174,7 +174,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
     d3.json("data/us-states.json", function (json) {
         //Merge the senate data and GeoJSON
         //Bind data and create one path per GeoJSON feature
-        statePaths = self.svg.selectAll("path")
+        self.statePaths = self.svg.selectAll("path")
 			  .data(json.features)
 			  .enter()
 			  .append("path")
@@ -221,6 +221,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 
 			      // Show the tooltip
 			      d3.select("#mapVisTooltip").classed("hidden", false);
+			      dispatch.membersHovered(delegation);
 			  })
 			  .on("mouseout", function(d) {
 			      d3.select(this).transition().duration(250)
@@ -228,6 +229,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 
 			      // Hide the tooltip
 			      d3.select("#mapVisTooltip").classed("hidden", true);
+			      dispatch.membersUnhovered();
 			  });
 
 	// MapVis.update():
@@ -240,7 +242,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 	map geoJSON file us-states.json MUST BE LOADED
 	in order for this to work. */
 	self.update = function() {
-	    statePaths
+	    self.statePaths
 		.sort(function(d) {
 			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			var delegation = congress.metaData.delegations[stateAbbrev];
@@ -259,7 +261,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			// Return normal color if no member is in selection
 			return 0;
 		})
-		.style("stroke", function(d) {
+		.attr("class", function(d) {
 			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
 			var delegation = congress.metaData.delegations[stateAbbrev];
 
@@ -267,7 +269,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			try {
 			    for (i = 0; i < delegation.length; i++) {
 				if (congress.selectedMembers.has(delegation[i])) {
-				    return "#9fff80";
+				    return "selectionState";
 				}
 			    }
 			} catch (TypeError) {
@@ -275,25 +277,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 			}
 
 			// Return normal color if no member is in selection
-			return "#000000";
-		})
-		.style("stroke-width", function(d) {
-			var stateAbbrev = congress.metaData.state_full_abbrev[d.properties.name];
-			var delegation = congress.metaData.delegations[stateAbbrev];
-
-			// Check if a member of the state's delegation is in the selection
-			try {
-			    for (i = 0; i < delegation.length; i++) {
-				if (congress.selectedMembers.has(delegation[i])) {
-				    return 5 + "px";
-				}
-			    }
-			} catch (TypeError) {
-			    // Do nothing
-			}
-
-			// Return normal color if no member is in selection
-			return 1 + "px";
+			return "normalState";
 		})
 		.transition().duration(350)
 		.style("fill", function (d) {

@@ -253,7 +253,20 @@ path {
     font-size: larger;
 }
 
+.normalState {
+    stroke: #000000;
+    stroke-width: 1px;
+}
 
+.selectionState {
+    stroke: #00FFFF;
+    stroke-width: 5px;
+}
+
+.hovered {
+    stroke: #9fff80;
+    stroke-width: 2px;
+}
 
 
 
