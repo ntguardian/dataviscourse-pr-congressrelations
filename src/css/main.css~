@@ -264,11 +264,16 @@ path {
 }
 
 .hovered {
-    stroke: #9fff80;
+    stroke: #000000;
     stroke-width: 3px;
 }
 
+.hovered .dot {
+    stroke: #666666;
+    stroke-width: 3px;
+}
 
+/* 9fff80*/
 
 
 
