@@ -19,7 +19,7 @@ The rest, save for map_test.html and scatterplot_test.html and the favicon, are 
 
 ## Process Book
 
-See [CS6630ProjectNotebook.pdf] for the process book.
+See CS6630ProjectNotebook.pdf for the process book.
 
 ## Website
 
