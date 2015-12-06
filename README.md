@@ -2,7 +2,7 @@
 
 *By Curtis Miller and Jignesh Rawal*
 
-![Map Image](./mapVisScreenshot1.png)
+![Map Image](./indexScreenshot1.png)
 
 ## Code  
 We started from an HTML5 Boilerplate template. Most code for the website is in the **src** directory. Our own code is included in:
@@ -38,12 +38,15 @@ You can find the live website [here](http://ntguardian.github.io).
 A Youtube demonstration is available [here](https://www.youtube.com/watch?v=wa0vqh6O1Qw).
 
 ### Scatterplot
+![Scatterplot](scatterVisDemo1.gif)
 The scatterplot shows Senate representatives for each state.  Democrats are colored blue, Republicans are red, and other parties are colored yellow. 
 On the X axis each senator is placed by their Ideology. The range starts with most liberal, and ends with most conservative. 
 The Y axis shows how often the selected senator or senators voted with each other senator.
 
 ### Map
+![Map](./mapVisScreenshot1.png)
 The map allow a user to select the senators of that state, and adjusts the scatterplot according to the selected state.
 
-### Selection tool
+### Selection Tool
+![Selection tool](./selectionTool.png)
 The selection tool allows users to search for senators, clear the current selection, toggles whether selecting a senator adds to the current selection, or overrides the current selection.
