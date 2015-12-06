@@ -24,6 +24,7 @@ The rest, save for map_test.html and scatterplot_test.html and the favicon, are 
 cd /path/to/apacheServer #Usually /var/www/html in Linux/Unix 
 git clone https://github.com/ntguardian/dataviscourse-pr-congressrelations
 npm install #Install nodejs or npm to install dependencies.
+npm build #R required for data preprocessing
 ```
 
 ## Process Book  
