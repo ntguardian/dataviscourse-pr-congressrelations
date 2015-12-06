@@ -186,9 +186,7 @@ congress.getAgreementPercent = function() {
             // Check for agreement
             while (!(sn.done)) {
                 // Notice that when a member doesn't vote, that vote is not included
-                agreement = agreement && 
-                            (self.data.members[mem1].votes[i] == self.data.members[sn.value].votes[i]) &&
-                            (self.data.members[sn.value].votes[i] != "Not Voting");
+                agreement = agreement & (self.data.members[mem1].votes[i] == self.data.members[sn.value].votes[i]) & (self.data.members[sn.value].votes[i] != "Not Voting");
                 sn = selectIter.next();
             }
 
@@ -228,7 +226,7 @@ congress.getAgreementPercent = function() {
                 var delAgreed = false;
                 for (dmi = 0; dmi < self.metaData.delegations[val].length; dmi++) {
                     var delMem = self.metaData.delegations[val][dmi];
-                    if ((self.nonselectedMembers.has(delMem)) &&     // Exclude selected members
+                    if ((self.nonselectedMembers.has(delMem)) &     // Exclude selected members
                         (self.data.members[delMem].votes[val2] == self.data.members[mem1].votes[val2])) {
 
                         delAgreed = true;
