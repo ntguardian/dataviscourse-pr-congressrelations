@@ -1,8 +1,8 @@
 {
   "devDependencies": {
     "apache-server-configs": "2.14.0",
-    "archiver": "^0.14.3",
-    "del": "^1.1.1",
+    "archiver": "^0.20.0",
+    "del": "^2.1.0",
     "glob": "^5.0.5",
     "gulp": "^3.8.11",
     "gulp-autoprefixer": "^3.1.0",
