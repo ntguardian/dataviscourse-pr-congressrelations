@@ -17,7 +17,7 @@ We started from an HTML5 Boilerplate template. Most code for the website is in t
 	* css/main.css
 	* raw_data/CS6630ReadData-12-2-15.r (not actually used by the vis, but used for data preprocessing)
 
-The rest, save for map_test.html and scatterplot_test.html and the favicon, are provided by HTML5 Boilerplate. Raw CSV files containing the data processed by CS6630ReadData-12-2-15.r are included in the raw_data folder
+The rest, save for map_test.html and scatterplot_test.html and the favicon, are provided by HTML5 Boilerplate. Raw CSV files containing the data processed by CS6630ReadData-12-2-15.r are included in the raw_data folder.  Gulpjs is used to lint, transpile, and copy all source code from the src folder and stores it in the dist folder.
 
 ## Installation  
 ```shell
