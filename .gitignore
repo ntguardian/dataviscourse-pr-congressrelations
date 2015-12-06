@@ -2,7 +2,5 @@ archive
 node_modules
 .idea
 .editorconfig
-.jscsrc
-.jshintrc
 .travis.yml
 *.*~
