@@ -15,26 +15,27 @@
         <!-- Place favicon.ico in the root directory -->
 
         <link rel="stylesheet" href="css/main.css">
-        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+        <!--<script src="js/vendor/modernizr-2.8.3.min.js"></script>-->
         <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="//code.jquery.com/jquery-1.10.2.js"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-        <script src="js/plugins.js"></script>
+        <!--<script src="js/plugins.js"></script>
         <script src="js/congress.js"></script>
         <script src="js/main.js"></script>
         <script src="js/scatterVis.js"></script>
-        <script src="js/mapVis.js"></script>
+        <script src="js/mapVis.js"></script>-->
+        <script src="js/app.min.js"></script>
         <script>
             addMemberBtn = function() {
                 var val = d3.select("#memberInput").node().value;
                 if (!document.getElementById("keepSelection").checked) {
-		    congress.clearMembers();
+		          congress.clearMembers();
                 }
                 try {
-		    congress.addMember(val);
+		          congress.addMember(val);
                 } catch (RangeError) {
-		    alert(val + " is not a valid member.");
+		          alert(val + " is not a valid member.");
                 }
                 dispatch.selectionChanged();
             }
@@ -46,18 +47,19 @@
         </script>
     </head>
     <body>
-        <!-- Add your site or application content here -->
-
+        
         <div id="title">
             <h1>Congressional Political Relationships</h1>
             <hr>
             <h2>By Curtis Miller and Jignesh Rawal</h2>
             <hr>
         </div>
+        
         <div id="visualizations">
             <div id="scatterVis" style="float:left"><svg></svg></div>
             <div id="mapVis" style="float:right"><svg></svg></div>
         </div>
+        
         <div id="ui">
             <div class="ui-memberSelect">
                 <label for="memberInput">Member: </label>
@@ -70,11 +72,15 @@
             <h1>Selection</h1>
             <p id="memberList">No one selected (charts shows victory rate)</p>
         </div>
+        
         <hr>
+        
         <div id="desc">
-
             <h1>YouTube Demonstration</h1>
-            <div style="text-align: center;"><iframe width="560" height="315"  src="https://www.youtube.com/embed/wa0vqh6O1Qw" frameborder="0" allowfullscreen></iframe></div>
+            <div style="text-align: center;">
+                <iframe width="560" height="315"  src="https://www.youtube.com/embed/wa0vqh6O1Qw" frameborder="0" allowfullscreen></iframe>
+            </div>
+            
 	    <h1>Introduction</h1>
 	    <p>The U.S. Congress is a complex entity, with 100 senators and 435 members of the House of Representatives, or 535 members total. While political party is certainly a very important factor in terms of how an individual congressman will vote, it is not a purely determining factor as in other countries where parties often vote as blocks and legislators merely occupy a seat for their political party. Congressmen, especially in the Senate, often act individually, and taking a position contrary to the party's position is not unheard of (although Congress is becoming more polarized and crossing party lines is less common). Thus, the political structure of Congress is much more complex than simply which party holds the majority.</p>
 	    <p>This project aims to visualize congressional voting patterns in terms of how similarly congressmen vote. If two congressmen tend to vote the same on bills or tend to cosponsor the same legislation, they may be considered "similar". When thinking about relationships between members of Congress in this way, we would like to visualize these relationships.</p>
@@ -117,15 +123,5 @@
 		<li>"Victory rate" means being a member of the winning coalition on any motion.</li>
 	    </ol>
         </div>
-
-        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <!-- <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='https://www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
-        </script> -->
     </body>
 </html>

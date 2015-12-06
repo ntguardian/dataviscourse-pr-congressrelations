@@ -12,7 +12,7 @@ var plugins = require('gulp-load-plugins')();
 
 // Temporary solution until gulp 4
 // https://github.com/gulpjs/gulp/issues/355
-//var runSequence = require('run-sequence');
+var runSequence = require('run-sequence');
 
 var pkg = require('./package.json');
 var dirs = pkg['h5bp-configs'].directories;
@@ -105,7 +105,7 @@ gulp.task('copy:license', function () {
 gulp.task('copy:main.css', function () {
 
     var banner = '/*! HTML5 Boilerplate v' + pkg.version +
-                    ' | ' + pkg.license.type + ' License' +
+                    ' | ' + pkg.license + ' License' +
                     ' | ' + pkg.homepage + ' */\n\n';
 
     return gulp.src(dirs.src + '/css/main.css')
@@ -153,10 +153,14 @@ gulp.task('lint:js', function () {
 });
 
 gulp.task('bundle', function(){
-    return gulp.src( dirs.src + '/js/**/*.js')
-      .pipe(plugins.concat('main.js'))
+    var jsPath = dirs.src + '/js/';
+
+    return gulp.src([jsPath + 'vendor/modernizr-2.8.3.min.js', jsPath + 'plugins.js', jsPath + 'congress.js', jsPath + 'main.js', jsPath + 'scatterVis.js', jsPath + 'mapVis.js'])
+      .pipe(plugins.concat('app.js'))
+      .pipe(gulp.dest(dirs.dist + "/js/"))
+      .pipe(plugins.rename('app.min.js'))
+      .pipe(plugins.uglify())
       .pipe(gulp.dest(dirs.dist + "/js/"));
-      //.pipe(plugins.uglify());
 });
 
 // ---------------------------------------------------------------------
@@ -165,6 +169,11 @@ gulp.task('bundle', function(){
 
 gulp.task('archive', [ 'build', 'archive:create_archive_dir', 'archive:zip']);
 
-gulp.task('build', ['clean', 'bundle', 'lint:js', "copy"]); 
+gulp.task('build', function(done){
+    runSequence('clean', 
+        ['bundle', 'lint:js'], 
+        "copy",
+        done);
+}); 
 
 gulp.task('default', ['build']);
