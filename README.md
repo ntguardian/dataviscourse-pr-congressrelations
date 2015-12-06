@@ -14,9 +14,9 @@ We started from an HTML5 Boilerplate template. Most code for the website is in t
 	* data/Senate114Metadata.json
 	* data/SenateRecord114.json
 	* css/main.css
-	* CS6630ReadData-12-2-15.r (not actually used by the vis, but used for data preprocessing)
+	* raw_data/CS6630ReadData-12-2-15.r (not actually used by the vis, but used for data preprocessing)
 
-The rest, save for map_test.html and scatterplot_test.html and the favicon, are provided by HTML5 Boilerplate.
+The rest, save for map_test.html and scatterplot_test.html and the favicon, are provided by HTML5 Boilerplate. Raw CSV files containing the data processed by CS6630ReadData-12-2-15.r are included in the raw_data folder
 
 ## Process Book
 
