@@ -135,8 +135,8 @@ congress.getAgreementPercent = function() {
             var count = 0;
 
             self.metaData.votes.forEach(function(val2, index) {
-                var voteInd = parseInt(val2, 10) - 1;
-                if (self.data.members[val].votes[index] == self.data.winning_vote[voteInd]) {
+                //var voteInd = parseInt(val2, 10) - 1;
+                if (self.data.members[val].votes[index] == self.data.winning_vote[index]) {
                     count++;
                 }
             });

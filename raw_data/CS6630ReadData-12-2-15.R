@@ -1,7 +1,15 @@
-# install.packages("rjson")
-library(rjson)
-library(magrittr)
-library(dplyr)
+if(!require(rjson)){
+  install.packages("rjson")
+  library(rjson)
+}
+if(!require(dplyr)){
+  install.packages("dplyr")
+  library(dplyr)
+}
+if(!require(magrittr)){
+  install.packages("magrittr")
+  library(magrittr)
+}
 
 vote.dist <- function(data) {
   sapply(unique(member_full), function(x) {

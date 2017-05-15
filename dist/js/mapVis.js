@@ -229,6 +229,7 @@ function MapVis(w, h, mt, mb, ml, mr, scale) {
 
 			      // Hide the tooltip
 			      d3.select("#mapVisTooltip").classed("hidden", true);
+			      dispatch.membersUnhovered();
 			  });
 
 	// MapVis.update():

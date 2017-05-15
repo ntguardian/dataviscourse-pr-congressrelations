@@ -1,2 +1,6 @@
 archive
 node_modules
+.idea
+.editorconfig
+.travis.yml
+*.*~

@@ -206,7 +206,7 @@ function ScatterVis(w, h, mt, mb, ml, mr, dotScale) {
                     // Zoom and lighten
                     d3.select(this)
                         .transition().duration(400)
-                        .attr("r", 20 * dotScale)
+                        .attr("r", 16 * dotScale)
                         .attr("opacity",.7);
 
                     // Move tooltip (code from: http://chimera.labs.oreilly.com/books/1230000000345/ch10.html#_html_div_tooltips)

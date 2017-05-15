@@ -17,18 +17,36 @@
         <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     </head>
     <body>
+        <script>
+            addMemberBtn = function() {
+                var val = d3.select("#memberInput").node().value;
+                congress.clearMembers();
+                congress.addMember(val);
+                dispatch.selectionChanged();
+            }
+
+            clearSelectionBtn = function() {
+                congress.clearMembers();
+                dispatch.selectionChanged();
+            }
+        </script>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <div id="mapVis"><svg></svg></div>
+
+        <input type="text" id="memberInput">
+        <button type="button" onclick="addMemberBtn()">Select member</button>
+        <button type="button" onclick="clearSelectionBtn()">Clear selection</button>
+        <!-- Scatterplot vis goes here -->
+        <div id="scatterVis"><svg></svg></div>
 
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/{{JQUERY_VERSION}}/jquery.min.js"></script> -->
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
         <script src="js/plugins.js"></script>
         <script src="js/congress.js"></script>
-        <script src="js/mapVis.js"></script>
+        <script src="js/scatterVis.js"></script>
         <!-- surrogate for main.js -->
         <script>
             // dispatch creation
@@ -39,7 +57,7 @@
              */
             dispatch = d3.dispatch("selectionChanged");
             dispatch.on("selectionChanged", function() {
-                mapVis.update();
+                scatterVis.update();
             });
 
             // Data loading
@@ -56,7 +74,7 @@
                     congress.getAgreementPercent();
 
                     // Call visualizations
-                    mapVis = new MapVis(1000,700,30,40,50,30,1000);
+                    scatterVis = new ScatterVis(1000,700,30,40,50,30,1);
                 });
             });
 

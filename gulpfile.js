@@ -2,6 +2,9 @@ var fs = require('fs');
 var path = require('path');
 
 var gulp = require('gulp');
+var glob = require('glob');
+var archiver = require('archiver')('zip');
+var del = require('del');
 
 // Load all gulp plugins automatically
 // and attach them to the `plugins` object
@@ -19,14 +22,17 @@ var dirs = pkg['h5bp-configs'].directories;
 // ---------------------------------------------------------------------
 
 gulp.task('archive:create_archive_dir', function () {
-    fs.mkdirSync(path.resolve(dirs.archive), '0755');
+    try{ 
+        fs.mkdirSync(path.resolve(dirs.archive), '0755');
+    }catch(e){
+        console.log(e.message);
+    }
 });
 
 gulp.task('archive:zip', function (done) {
-
+    
     var archiveName = path.resolve(dirs.archive, pkg.name + '_v' + pkg.version + '.zip');
-    var archiver = require('archiver')('zip');
-    var files = require('glob').sync('**/*.*', {
+    var files = glob.sync('**/*.*', {
         'cwd': dirs.dist,
         'dot': true // include hidden files
     });
@@ -54,14 +60,13 @@ gulp.task('archive:zip', function (done) {
 
     archiver.pipe(output);
     archiver.finalize();
-
 });
 
-gulp.task('clean', function (done) {
-    require('del')([
+gulp.task('clean', function () {
+    del.sync([
         dirs.archive,
         dirs.dist
-    ], done);
+    ]);
 });
 
 gulp.task('copy', [
@@ -100,7 +105,7 @@ gulp.task('copy:license', function () {
 gulp.task('copy:main.css', function () {
 
     var banner = '/*! HTML5 Boilerplate v' + pkg.version +
-                    ' | ' + pkg.license.type + ' License' +
+                    ' | ' + pkg.license + ' License' +
                     ' | ' + pkg.homepage + ' */\n\n';
 
     return gulp.src(dirs.src + '/css/main.css')
@@ -139,7 +144,7 @@ gulp.task('copy:normalize', function () {
 gulp.task('lint:js', function () {
     return gulp.src([
         'gulpfile.js',
-        dirs.src + '/js/*.js',
+        dirs.dir + '/js/*.js',
         dirs.test + '/*.js'
     ]).pipe(plugins.jscs())
       .pipe(plugins.jshint())
@@ -147,24 +152,28 @@ gulp.task('lint:js', function () {
       .pipe(plugins.jshint.reporter('fail'));
 });
 
+gulp.task('bundle', function(){
+    var jsPath = dirs.src + '/js/';
+
+    return gulp.src([jsPath + 'vendor/modernizr-2.8.3.min.js', jsPath + 'plugins.js', jsPath + 'congress.js', jsPath + 'main.js', jsPath + 'scatterVis.js', jsPath + 'mapVis.js'])
+      .pipe(plugins.concat('app.js'))
+      .pipe(gulp.dest(dirs.dist + "/js/"))
+      .pipe(plugins.rename('app.min.js'))
+      .pipe(plugins.uglify())
+      .pipe(gulp.dest(dirs.dist + "/js/"));
+});
 
 // ---------------------------------------------------------------------
 // | Main tasks                                                        |
 // ---------------------------------------------------------------------
 
-gulp.task('archive', function (done) {
-    runSequence(
-        'build',
-        'archive:create_archive_dir',
-        'archive:zip',
-    done);
-});
+gulp.task('archive', [ 'build', 'archive:create_archive_dir', 'archive:zip']);
 
-gulp.task('build', function (done) {
-    runSequence(
-        ['clean', 'lint:js'],
-        'copy',
-    done);
-});
+gulp.task('build', function(done){
+    runSequence('clean', 
+        ['bundle', 'lint:js'], 
+        "copy",
+        done);
+}); 
 
 gulp.task('default', ['build']);
